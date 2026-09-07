@@ -1,0 +1,65 @@
+{
+  "skill_name": "ai-visibility",
+  "evals": [
+    {
+      "id": 0,
+      "name": "nextjs-turso-traffic",
+      "prompt": "i run a small next.js 15 app on vercel (app router, drizzle + turso, db client already wired in lib/db.ts). i want to know if chatgpt and claude are actually crawling my docs pages \u2014 google analytics shows me nothing at all which i'm guessing is because bots don't run js? can you set up server-side logging for AI crawlers and a basic admin page so i can actually look at it",
+      "expected_output": "Server-side capture (middleware) with a crawler catalogue and purpose taxonomy, an ai_visits table, fire-and-forget insert off the request path, prefetch skipping, IP verification plan, and an admin view that splits train/search/user rather than one blended AI-traffic number.",
+      "files": [],
+      "assertions": [
+        "Classifies crawlers into a purpose taxonomy (train / search / user), rather than one blended 'AI bot' bucket",
+        "Treats OAI-SearchBot, ChatGPT-User and GPTBot as three distinct agents with different purposes",
+        "Insert is fire-and-forget (waitUntil or unawaited promise) so tracking cannot block or fail the response",
+        "Skips Next.js router prefetch requests so real users aren't double-counted",
+        "Takes the client IP as the FIRST entry of x-forwarded-for, and stores it raw",
+        "Includes crawler verification against vendors' published IP ranges",
+        "verified is tri-state (NULL unchecked / 1 in-range / 0 failed-or-unprovable), not a plain boolean",
+        "Route matcher excludes static assets but still captures robots.txt / sitemap.xml",
+        "Explains that bots don't execute JavaScript, which is why client-side analytics shows nothing",
+        "Crawler regex order puts specific patterns before the generic ones they are substrings of",
+        "Admin dashboard is access-gated"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "sveltekit-d1-both",
+      "prompt": "we have a sveltekit marketing site on cloudflare pages with a d1 database. leadership keeps asking 'are we showing up in AI search' and i want something in the repo that actually answers it \u2014 both which bots are hitting us and whether the models mention us versus our competitors. postgres isn't an option here and i'd rather not pay for profound or similar",
+      "expected_output": "Both halves adapted to SvelteKit hooks.server.ts + D1 (cf-connecting-ip / cf-ipcountry, ctx.waitUntil), SQLite DDL, three probe modes kept separate, share-of-voice denominator explained, and honest statement of what cannot be measured.",
+      "files": [],
+      "assertions": [
+        "Capture is wired into SvelteKit's hooks.server.ts, not Next.js middleware",
+        "Uses Cloudflare's cf-connecting-ip / cf-ipcountry headers rather than Vercel's",
+        "DDL is SQLite/D1-compatible (no Postgres-only types such as jsonb or timestamptz)",
+        "Delivers both halves: crawler/referral traffic AND model-mention tracking",
+        "Keeps the three probe modes (memory / retrieval / index) as separate metrics",
+        "States that scores must never be averaged across probe modes",
+        "Share-of-voice denominator is answers naming anybody, not all answers",
+        "Includes a purpose taxonomy for crawlers (train / search / user)",
+        "States explicitly what this cannot measure (e.g. real-browser ChatGPT, or Google's AI reads)",
+        "Distinguishes a mention (model memory) from a citation (live retrieval)"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "probe-scoring",
+      "prompt": "i already log AI bot hits into a table called ai_visits (kind/agent/path/ts). now i want the other half \u2014 a weekly job that asks a handful of prompts like 'best expense management tools for startups' across a few models and records whether we get named and who we lose to. i've got GEMINI_API_KEY and GROQ_API_KEY set up. how should i score this so the number isn't garbage?",
+      "expected_output": "Three probe modes distinguished (memory via Groq, retrieval via Gemini grounding, index needs a search key), share-of-voice denominator = answers naming anybody, mentioned/position/cited/competitors extraction, alias-matching lookaround caveat, temperature 0, per-probe pacing, dry mode, and never averaging across modes.",
+      "files": [],
+      "assertions": [
+        "Distinguishes memory (no web access) from retrieval (grounded search) as separate modes",
+        "Maps Groq to the memory probe and Gemini grounding to the retrieval probe",
+        "Notes that an index/search-rank probe needs a search API key the user does not have",
+        "Answers the scoring question with denominator = answers naming anybody, excluding no-recommendation answers",
+        "Extracts all four signals: mentioned, position, cited, competitors",
+        "Uses temperature 0 for the memory probe",
+        "Paces requests per provider rather than globally, for free-tier rate limits",
+        "Provides a dry-run mode that spends nothing and writes nothing",
+        "States that averaging across modes is meaningless",
+        "Warns that brand-alias matching with \\b breaks on names containing dots",
+        "Notes that competitors absent from the tracked list are invisible to share-of-voice",
+        "Keeps the full answer text so a score change can be explained"
+      ]
+    }
+  ]
+}
