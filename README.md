@@ -142,3 +142,16 @@ Most of the revisions came from *reading the runs*, not the scores. Several came
 from a baseline out-designing the first draft: K-sampling per cell, freezing the
 model version as a series break, prompt-seeded brand exclusion, and never
 letting an LLM grade the LLM. The eval set is in `evals/` if you want to re-run it.
+
+## Install counts
+
+A daily workflow snapshots GitHub's traffic data into
+[`traffic/SUMMARY.md`](traffic/SUMMARY.md). It exists because GitHub keeps only
+a **14-day rolling window** and discards the rest, so anything not captured is
+lost for good.
+
+Clones cover every install path — `claude plugin marketplace add`,
+`npx skills add`, and manual `git clone` — and can't be told apart.
+`claude plugin update` re-fetches, so `uniques` is the better proxy for people
+than `count`. None of it measures actual *use*: a skill is static markdown with
+no runtime, so acquisition is the only thing observable.

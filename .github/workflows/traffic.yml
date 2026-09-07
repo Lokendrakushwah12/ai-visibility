@@ -1,0 +1,64 @@
+name: Snapshot traffic
+
+# GitHub keeps only a 14-day rolling window of traffic data and discards the
+# rest, so anything not snapshotted is lost permanently. This records it daily
+# into traffic/ so the history survives.
+on:
+  schedule:
+    # 04:37 UTC. Off the top of the hour on purpose - GitHub queues scheduled
+    # runs under load and :00 is the most contended minute there is.
+    - cron: "37 4 * * *"
+  workflow_dispatch:
+
+# Needed both to commit the history and for the traffic API, which requires
+# push access to the repository.
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch traffic data
+        env:
+          GH_TOKEN: ${{ secrets.TRAFFIC_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/traffic
+          fail=0
+          for ep in clones views popular/referrers; do
+            out="/tmp/traffic/$(basename "$ep").json"
+            if ! gh api "repos/${{ github.repository }}/traffic/$ep" > "$out" 2>/tmp/err; then
+              echo "::error::traffic/$ep failed: $(cat /tmp/err)"
+              fail=1
+            fi
+          done
+          if [ "$fail" -ne 0 ]; then
+            echo "::error::The traffic API requires push access. If this is a 403,"
+            echo "::error::GITHUB_TOKEN was not sufficient - create a fine-grained PAT"
+            echo "::error::with 'Administration: read' on this repo and save it as the"
+            echo "::error::TRAFFIC_TOKEN secret. This workflow prefers it when present."
+            exit 1
+          fi
+
+      - name: Merge into history
+        run: |
+          python3 scripts/snapshot-traffic.py \
+            /tmp/traffic/clones.json \
+            /tmp/traffic/views.json \
+            /tmp/traffic/referrers.json
+
+      - name: Commit if changed
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- traffic/; then
+            echo "No change in traffic data - nothing to commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add traffic/
+          git commit -m "chore(traffic): snapshot $(date -u +%Y-%m-%d)"
+          git push
