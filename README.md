@@ -10,17 +10,30 @@ honestly measure — and is explicit about the parts you can't.
 
 ## Install
 
-```bash
-# any agent (Claude Code, Cursor, Codex, ...) - installs into ./<agent>/skills/
-npx skills add lokendrakushwah12/ai-visibility
+**Claude Code plugin** (first-party):
 
-# globally, available across all projects
-npx skills add -g lokendrakushwah12/ai-visibility
+```bash
+claude plugin marketplace add Lokendrakushwah12/ai-visibility
+claude plugin install ai-visibility@ai-visibility
 ```
 
-`npx skills` is [vercel-labs/skills](https://github.com/vercel-labs/skills), a
-third-party CLI. For Claude Code specifically you can also just clone this repo
-into `~/.claude/skills/ai-visibility/`.
+**Any agent** via [vercel-labs/skills](https://github.com/vercel-labs/skills), a
+third-party CLI — works with Claude Code, Cursor, Codex and others:
+
+```bash
+npx skills add Lokendrakushwah12/ai-visibility      # into ./<agent>/skills/
+npx skills add -g Lokendrakushwah12/ai-visibility   # global
+```
+
+**By hand**, if you'd rather not run either:
+
+```bash
+git clone git@github.com:Lokendrakushwah12/ai-visibility.git
+cp -R ai-visibility/skills/ai-visibility ~/.claude/skills/
+```
+
+The `skills/<name>/SKILL.md` layout is what lets one repo serve all three —
+Claude Code plugins require it, and the `skills` CLI discovers it.
 
 ## What it covers
 

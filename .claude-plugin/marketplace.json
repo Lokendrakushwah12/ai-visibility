@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "ai-visibility",
+  "description": "Self-hosted AI visibility / AEO tracking: which AI crawlers read you, and whether models recommend you.",
+  "owner": {
+    "name": "Lokendra Kushwah",
+    "url": "https://github.com/Lokendrakushwah12"
+  },
+  "plugins": [
+    {
+      "name": "ai-visibility",
+      "description": "Log AI crawler hits and assistant referrals, verify crawlers against vendor IP ranges, and probe model recommendations across memory/retrieval/index modes with honest share-of-voice scoring.",
+      "source": "./",
+      "category": "analytics"
+    }
+  ]
+}

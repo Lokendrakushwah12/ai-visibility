@@ -1,0 +1,12 @@
+{
+  "name": "ai-visibility",
+  "version": "0.1.0",
+  "description": "Build a self-hosted AI visibility / AEO tracker: log which AI crawlers read your site and which humans arrive from ChatGPT, Claude or Perplexity, verify crawlers against vendors' published IP ranges, and probe whether models actually recommend you.",
+  "author": {
+    "name": "Lokendra Kushwah",
+    "url": "https://github.com/Lokendrakushwah12"
+  },
+  "homepage": "https://github.com/Lokendrakushwah12/ai-visibility",
+  "license": "MIT",
+  "keywords": ["aeo", "geo", "seo", "ai-crawlers", "llm-visibility", "analytics"]
+}
