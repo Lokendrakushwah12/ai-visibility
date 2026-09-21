@@ -10,8 +10,8 @@ on:
     - cron: "37 4 * * *"
   workflow_dispatch:
 
-# Needed both to commit the history and for the traffic API, which requires
-# push access to the repository.
+# To commit the history. The traffic API itself needs 'Administration: read',
+# which GITHUB_TOKEN cannot be granted - hence TRAFFIC_TOKEN below.
 permissions:
   contents: write
 
@@ -23,9 +23,15 @@ jobs:
 
       - name: Fetch traffic data
         env:
-          GH_TOKEN: ${{ secrets.TRAFFIC_TOKEN || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
         run: |
           set -euo pipefail
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "::error::TRAFFIC_TOKEN is not set. Create a fine-grained PAT with"
+            echo "::error::'Administration: read' on this repo and save it as the"
+            echo "::error::TRAFFIC_TOKEN secret. GITHUB_TOKEN cannot access this API."
+            exit 1
+          fi
           mkdir -p /tmp/traffic
           fail=0
           for ep in clones views popular/referrers; do
@@ -36,10 +42,8 @@ jobs:
             fi
           done
           if [ "$fail" -ne 0 ]; then
-            echo "::error::The traffic API requires push access. If this is a 403,"
-            echo "::error::GITHUB_TOKEN was not sufficient - create a fine-grained PAT"
-            echo "::error::with 'Administration: read' on this repo and save it as the"
-            echo "::error::TRAFFIC_TOKEN secret. This workflow prefers it when present."
+            echo "::error::A 403 here means TRAFFIC_TOKEN lacks 'Administration: read'"
+            echo "::error::on this repo, or it has expired."
             exit 1
           fi
 
@@ -53,12 +57,15 @@ jobs:
       - name: Commit if changed
         run: |
           set -euo pipefail
-          if git diff --quiet -- traffic/; then
+          # Stage first: plain 'git diff' ignores untracked files, so on the
+          # first run - when traffic/ is entirely new - it sees no change and
+          # the snapshot is silently discarded.
+          git add -A traffic/
+          if git diff --cached --quiet -- traffic/; then
             echo "No change in traffic data - nothing to commit."
             exit 0
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add traffic/
           git commit -m "chore(traffic): snapshot $(date -u +%Y-%m-%d)"
           git push
