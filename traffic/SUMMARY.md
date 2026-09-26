@@ -16,7 +16,7 @@ Snapshotted daily because GitHub only retains 14 days.
 
 ## Top referrers (most recent snapshot)
 
-_as of 2026-09-25_
+_as of 2026-09-26_
 
 - github.com — 11 (2 unique)
 
