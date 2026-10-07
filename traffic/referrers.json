@@ -168,5 +168,15 @@
         "uniques": 2
       }
     ]
+  },
+  {
+    "snapshot_date": "2026-10-07",
+    "referrers": [
+      {
+        "referrer": "github.com",
+        "count": 5,
+        "uniques": 2
+      }
+    ]
   }
 ]
