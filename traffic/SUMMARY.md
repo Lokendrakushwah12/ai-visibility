@@ -4,19 +4,19 @@ Snapshotted daily because GitHub only retains 14 days.
 
 ## Clones
 
-- **465** total, **299** unique, across 46 recorded days
-- last 14 recorded days: 194 total, 120 unique
-- first recorded: `2026-09-07`, latest: `2026-10-22`
+- **470** total, **302** unique, across 47 recorded days
+- last 14 recorded days: 180 total, 110 unique
+- first recorded: `2026-09-07`, latest: `2026-10-23`
 
 ## Views
 
-- **103** total, **17** unique, across 46 recorded days
+- **103** total, **17** unique, across 47 recorded days
 - last 14 recorded days: 4 total, 2 unique
-- first recorded: `2026-09-07`, latest: `2026-10-22`
+- first recorded: `2026-09-07`, latest: `2026-10-23`
 
 ## Top referrers (most recent snapshot)
 
-_as of 2026-10-23_
+_as of 2026-10-24_
 
 - github.com — 2 (2 unique)
 
